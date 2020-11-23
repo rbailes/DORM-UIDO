@@ -35,16 +35,16 @@ def infovec(senString):
 
 def dorm(logvec, correct=False):
   #PART III: The DORM
-  if len(logvec) == 1:
-    dorm = 0 #JCW: changed this from "return 0" so that the length correction will still apply to 1-word sentences
+  if len(logvec) <= 2: #changing this to return 0 for 1- and 2-word cases, so that we can used unbiased sample variance as estimator as per Ferrer i Cancho's suggestion
+    dorm = 0 #JCW: changed this from "return 0" so that the length correction will still apply
   else:
     logvec_df=pd.DataFrame(logvec)
     rmeans=logvec_df.rolling(2).mean()
     rmeans=rmeans.dropna()
-    dorm=np.std(rmeans.to_numpy(),ddof=0) 
-    #Note: by default, ddof = 0, which gives lower dorms than "sd()" in R, 
-    #which has equivalent of ddof=1. np.std(...,ddof=1) yields identical results to "sd()" in R. 
-    #Note also that ddof=1 fails when there is only 1 mean in the list, since std is computed by dividing by N-ddof observations.
+    dorm=  np.var(rmeans.to_numpy(),ddof=1) #Changed to unbiased sample variance 23Nov2020, as estimator as per Ferrer i Cancho's suggestion; old code: np.std(rmeans.to_numpy(),ddof=0) 
+    #Notes: by default, ddof = 0, which gives lower dorms than "sd()" and "var()" in R, 
+    #which has equivalent of ddof=1. np.std(...,ddof=1) yields identical results to "sd()" in R, and likewise for np.var(). 
+    #Note also that ddof=1 fails when there is only 1 mean in the list, since std is computed by dividing by N-ddof observations. ddof=1 provides an unbiased estimator.
     if correct:
       #old way, brute force
       #uniquePerms=list(set(permutations(logvec)))
