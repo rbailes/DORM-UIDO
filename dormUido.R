@@ -7,7 +7,7 @@
 #by definition, because there's no alteernative order. It also penalizes repetitions of a single word, as in ASD stereotyped language.
 #Uses: library(combinat), permn(), unique()
 
-#library(zoo)
+library(zoo)
 
 dorm <- function(logvec,correct=FALSE)
 {
